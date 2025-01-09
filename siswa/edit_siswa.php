@@ -1,8 +1,15 @@
+
+
+
+
+
+
+
 <div class="content-wrapper" style="min-height: 956px;">
     <!-- Content Header (Page header) -->
     <section class="content-header">
       <h1>
-        EDIT DATA SISWA
+        EDIT DATA MINUMAN
       </h1>
       <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -28,7 +35,7 @@ $row=mysqli_fetch_array($query);
             </div>
             <!-- /.box-header -->
             <!-- form start -->
-            <form role="form" action="siswa/aksi_tambah_siswa.php" method="POST">
+            <form role="form" action="Minuman/aksi_tambah_siswa.php" method="POST">
               <div class="box-body">
               <div class="form-group">
                   <label>Nama</label>
