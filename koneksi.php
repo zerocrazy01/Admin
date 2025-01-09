@@ -1,14 +1,13 @@
 <?php
-$host = "localhost"; // Nama host
-$user = "root";      // Username database
-$pass = "";          // Password database
-$db   = "web_login"; // Nama database
+$host = "localhost";
+$user = "root";
+$pass = ""; // Kosongkan password jika default
+$db = "db_estetico";
 
-// Membuat koneksi
-$conn = mysqli_connect($host, $user, $pass, $db);
+$mysqli = new mysqli($host, $user, $pass, $db);
 
-// Cek koneksi
-if (!$conn) {
-    die("Koneksi gagal: " . mysqli_connect_error());
+// Periksa apakah koneksi berhasil
+if ($mysqli->connect_error) {
+    die("Koneksi gagal: " . $mysqli->connect_error);
 }
 ?>
