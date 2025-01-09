@@ -1,40 +1,47 @@
 <?php
 session_start();
-include 'koneksi.php'; // Sambungkan ke database
+require 'koneksi.php'; // Pastikan file koneksi.php tersedia dan benar
 
-// Ambil data dari form login
-$email = $_POST['email'];
-$password = $_POST['password'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Pastikan input username dan password ada
+    if (!empty($_POST['username']) && !empty($_POST['password'])) {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
 
-// Validasi input
-if (empty($email) || empty($password)) {
-    echo "<script>alert('Email dan password harus diisi!');window.location='login.php';</script>";
-    exit;
-}
+        // Menggunakan prepared statement untuk keamanan
+        $stmt = $mysqli->prepare("SELECT * FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-// Menggunakan Prepared Statement untuk keamanan
-$query = "SELECT * FROM users WHERE email = ?";
-$stmt = $conn->prepare($query);
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$result = $stmt->get_result();
+        if ($result && $result->num_rows > 0) {
+            $user = $result->fetch_assoc();
 
-if ($result->num_rows > 0) {
-    $row = $result->fetch_assoc();
+            // Verifikasi password menggunakan fungsi password_verify
+            if (password_verify($password, $user['password'])) {
+                // Set session untuk pengguna yang berhasil login
+                $_SESSION['logged_in'] = true;
+                $_SESSION['username'] = $user['username'];
 
-    // Verifikasi password (asumsi password di database menggunakan password_hash())
-    if (password_verify($password, $row['password'])) {
-        $_SESSION['logged_in'] = true;
-        $_SESSION['email'] = $email;
-        header("Location: index.php"); // Redirect ke halaman utama
-        exit;
+                // Redirect ke halaman index.php
+                header("Location: index.php");
+                exit;
+            } else {
+                // Jika password salah
+                echo "<script>alert('Password salah!'); window.location='login.php';</script>";
+            }
+        } else {
+            // Jika username tidak ditemukan
+            echo "<script>alert('Username tidak ditemukan!'); window.location='login.php';</script>";
+        }
+
+        $stmt->close();
     } else {
-        echo "<script>alert('Password salah!');window.location='login.php';</script>";
+        echo "<script>alert('Username dan password harus diisi!'); window.location='login.php';</script>";
     }
 } else {
-    echo "<script>alert('Email tidak ditemukan!');window.location='login.php';</script>";
+    // Redirect jika akses langsung tanpa menggunakan form login
+    header("Location: login.php");
+    exit;
 }
-
-$stmt->close();
-$conn->close();
 ?>
