@@ -1,22 +1,27 @@
 <?php
-$id=$_POST['id'];
-$nama=$_POST['nama'];
-$harga=$_POST['harga'];
-$stok=$_POST['stok'];
-
 include("../koneksi.php");
 
-$sql="update tbl_siswa set nama='$nama',
-harga='$harga',
-stok='$stok' where id='$id'";
+// Mendapatkan data dari form
+$id = $_POST['id'];
+$nama = $_POST['nama'];
+$harga = $_POST['harga'];
+$stok = $_POST['stok'];
 
-$query=mysqli_query($mysqli,$sql);
-if ($query) {
-	header("location:../index.php?hal=siswa&pesan=berhasil_edit");
-}else{
-	header("location:../index.php?hal=siswa&pesan=gagal_edit");
-	echo mysqli_error();
-	echo "$sql";
+// Periksa apakah semua data telah diterima
+if (!empty($id) && !empty($nama) && !empty($harga) && !empty($stok)) {
+    // Query UPDATE untuk mengubah data berdasarkan ID
+    $sql = "UPDATE minuman SET nama='$nama', harga='$harga', stok='$stok' WHERE id='$id'";
+    $query = mysqli_query($mysqli, $sql);
+
+    if ($query) {
+        // Redirect ke halaman tertentu jika berhasil
+        header("Location: ../success.php?message=Data berhasil diperbarui");
+        exit();
+    } else {
+        // Tampilkan error jika query gagal
+        echo "Gagal memperbarui data: " . mysqli_error($mysqli);
+    }
+} else {
+    echo "Semua field harus diisi.";
 }
-
-
+?>
